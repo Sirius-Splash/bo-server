@@ -1,0 +1,15 @@
+{
+  "name": "bo-server",
+  "version": "1.0.0",
+  "description": "BO server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sirius Sploosh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "prisma": "^5.0.0"
+  }
+}
