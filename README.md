@@ -14,13 +14,13 @@
 # Git Workflow
 1. Claim a ticket
 2. Update your local master branch, and then create a new feature branch
-   `git checkout master`
-   `git pull upstream master`
-   `git checkout -b [feature-branch]`
+   - `git checkout master`
+   - `git pull upstream master`
+   - `git checkout -b [feature-branch]`
 4. Make changes (try to keep them within the scope of your ticket)
-   `git add .`
-   `git commit`
+   - `git add .`
+   - `git commit`
 5. Before making a pull request, rebase your feature branch on the upstream master to avoid conflicts
-   `git pull --rebase upstream master`
-   Run your code again to confirm that it still functions
+   - `git pull --rebase upstream master`
+   - Run your code again to confirm that it still functions
 6. Make a pull request
