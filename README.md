@@ -15,7 +15,7 @@
 1. Claim a ticket
 2. Update your local master branch, and then create a new feature branch
    - `git checkout master`
-   - `git pull upstream master`
+   - `git pull`
    - `git checkout -b [feature-branch]`
 4. Make changes (try to keep them within the scope of your ticket)
    - `git add .`
