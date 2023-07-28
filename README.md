@@ -21,6 +21,9 @@
    - `git add .`
    - `git commit`
 5. Before making a pull request, rebase your feature branch on the upstream master to avoid conflicts
-   - `git pull --rebase upstream master`
+   - `git checkout master`
+   - `git pull`
+   - `git checkout [feature-branch]`
+   - `git rebase master`
    - Run your code again to confirm that it still functions
 6. Make a pull request
