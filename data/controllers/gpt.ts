@@ -1,3 +1,4 @@
+import { checkPrimeSync } from "crypto";
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
@@ -8,6 +9,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async (req, res) => {
+  try {
   const { info } = req.body;
   const userdata = info.userdata;
   let sysprompt = `You are a health and fitness coach chatbot who replies enthusiastically and encouragingly to your client. Who is ${userdata.sex}. Their age is ${userdata.age}. They have ${userdata.experience} experience with fitness. They have ${userdata.equitment} gym equipment available to them. Their weight is ${userdata.weight} pounds. They are ${userdata.height} inches tall. They have the goal to ${userdata.goal}.`
@@ -33,4 +35,14 @@ export default async (req, res) => {
   });
 
   res.status(200).json({ gptResponse });
-};
+  } catch (error) {
+    if (error.response) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      res.sendsStatus(500);
+    } else {
+    console.log(error);
+    res.sendsStatus(500);
+  }
+}
+}
