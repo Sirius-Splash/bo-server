@@ -10,22 +10,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Widget {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-}
-
 model User {
-  id    Int     @id @default(sequence())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id serial [primary key]
+  username text
+  password text
+  name varchar[16]
+  email text
+  age smallint
+  sex varchar[6]
+  height smallint
+  weight smallint
+  experience smallint
+  goals text
+  equipment boolean
+  trainer boolean
+  profile_pic text
+  online_status boolean
 }
 
 model Post {
-  id        Int     @id @default(sequence())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+  id serial [primary key]
+  user_id serial
+  title varchar[32]
+  body text
+  created_at timestamp
+  updated_at timestamp
+}
+
+model Photo {
+  id serial [primary key]
+  post_id serial
+  url text
 }
