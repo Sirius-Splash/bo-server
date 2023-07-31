@@ -11,34 +11,74 @@ datasource db {
 }
 
 model User {
-  id serial [primary key]
-  username text
-  password text
-  name varchar[16]
-  email text
-  age smallint
-  sex varchar[6]
-  height smallint
-  weight smallint
-  experience smallint
-  goals text
-  equipment boolean
-  trainer boolean
-  profile_pic text
-  online_status boolean
+  id            Int      @id @default(sequence())
+  username      String
+  password      String
+  name          String
+  email         String
+  age           Int?
+  sex           String?
+  height        Int?
+  weight        Int?
+  experience    Int?
+  goals         String?
+  equipment     Boolean?
+  trainer       Boolean?
+  profile_pic   String?
+  online_status Boolean?
+
+  posts             Post[]
+  ai_chats          AiChat[]
+  sent_messages     DirectMessage[] @relation("SentMessages")
+  received_messages DirectMessage[] @relation("ReceivedMessages")
 }
 
 model Post {
-  id serial [primary key]
-  user_id serial
-  title varchar[32]
-  body text
-  created_at timestamp
-  updated_at timestamp
+  id         Int      @id @default(sequence())
+  user_id    Int
+  title      String
+  body       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user   User    @relation(fields: [user_id], references: [id])
+  photos Photo[]
 }
 
 model Photo {
-  id serial [primary key]
-  post_id serial
-  url text
+  id      Int    @id @default(sequence())
+  post_id Int
+  url     String
+
+  post Post @relation(fields: [post_id], references: [id])
+}
+
+model AiChat {
+  id         Int      @id @default(sequence())
+  user_id    Int
+  created_at DateTime @default(now())
+
+  user         User            @relation(fields: [user_id], references: [id])
+  chat_history AiChatHistory[]
+}
+
+model AiChatHistory {
+  id         Int      @id @default(sequence())
+  ai_chat_id Int
+  created_at DateTime @default(now())
+  message    String
+  is_ai      Boolean
+
+  ai_chat AiChat @relation(fields: [ai_chat_id], references: [id])
+}
+
+model DirectMessage {
+  id           Int      @id @default(sequence())
+  created_at   DateTime @default(now())
+  sender_id    Int
+  recipient_id Int
+  chat         String
+
+  sender    User @relation("SentMessages", fields: [sender_id], references: [id])
+  recipient User @relation("ReceivedMessages", fields: [recipient_id], references: [id])
 }
