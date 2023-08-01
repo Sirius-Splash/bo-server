@@ -1,6 +1,7 @@
 import prisma from "../models/database.js";
 import { Configuration, OpenAIApi } from "openai";
-
+const express = require('express');
+const router = express.Router();
 
 async function getAiChatHistoryByAiChatId(aiChatId) {
   const aiChatHistories = await prisma.aiChatHistory.findMany({
@@ -90,10 +91,12 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export default async (req, res) => {
+module.exports = () => {
+
+  router.post('/', async (req, res) => {
   try {
   const { info } = req.body;
-  let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(info.chatId), getUserById(info.userId), addUserMessageToAiChatHistory(info.chatId, info.message)]);
+  let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(req.query), getUserById(info.userId), addUserMessageToAiChatHistory(req.query, info.message)]);
   let chatHistory = await sortAiChatHistory(chatHistory);
   let sysprompt = `You are a health and fitness coach chatbot who replies enthusiastically and encouragingly to your client. Who is ${userdata.sex}. Their age is ${userdata.age}. They have ${userdata.experience} experience with fitness. They have ${userdata.equitment} gym equipment available to them. Their weight is ${userdata.weight} pounds. They are ${userdata.height} inches tall. They have the goal to ${userdata.goal}.`
 
@@ -116,7 +119,7 @@ export default async (req, res) => {
     stream: false,
   });
 
-  await addAiResponseToAiChatHistory(info.chatId, gptResponse.data.choices[0].content);
+  await addAiResponseToAiChatHistory(req.query, gptResponse.data.choices[0].content);
 
   res.status(200).json(gptResponse.data.choices[0].content);
   } catch (error) {
@@ -129,4 +132,17 @@ export default async (req, res) => {
     res.sendsStatus(500);
   }
 }
+});
+
+router.get('/', async (req, res) => {
+  try {
+    const chatId = req.query;
+    const chatHistory = await getAiChatHistoryByAiChatId(chatId);
+    const sortedChatHistory = await sortAiChatHistory(chatHistory);
+    res.status(200).json(sortedChatHistory);
+  } catch (error) {
+    console.error('Error fetching AIChatHistory:', error);
+    res.sendStatus(500);
+  }
 }
+)};
