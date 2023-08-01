@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "cockroachdb"
-  url      = env("postgresql://jymbrah:bJwtbGeJDnQEud1Cy_x2nw@jymbrah-4781.g8z.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full")
+  url      = env("DATABASE_URL")
 }
 
 model Widget {
