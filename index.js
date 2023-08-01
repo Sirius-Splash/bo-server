@@ -8,7 +8,7 @@ const controllers = require('./data/controllers')
 
 app.use(morgan('dev'))
 app.use(bodyParser.json())
-
+app.use("/gpt", gpt());
 
 app.post('/user', controllers.addUser);
 // app.get('/users', controllers.getUsers);
@@ -17,7 +17,7 @@ app.use('/', (req, res)=>{
   res.sendStatus(404)
 });
 
-app.use("/gpt", gpt);
+
 
 app.listen(PORT)
 console.log(`Listening on port ${PORT}`)

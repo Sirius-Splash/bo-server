@@ -1,4 +1,5 @@
-const prisma  = require("../models/database.js");
+const prisma = require("../models/index.js")
+
 const { Configuration, OpenAIApi } = require("openai");
 const express = require('express');
 const router = express.Router();
@@ -12,9 +13,8 @@ async function getAiChatHistoryByAiChatId(aiChatId) {
   return aiChatHistories;
 }
 
-async function sortAiChatHistory(aiChatId) {
+async function sortAiChatHistory(aiChatHistories) {
   try {
-    const aiChatHistories = await getAiChatHistoryByAiChatId(aiChatId);
 
     // Sort the AIChatHistory array in chronological order based on 'created_at'
     aiChatHistories.sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
@@ -29,7 +29,7 @@ async function sortAiChatHistory(aiChatId) {
 
     return formattedData;
   } catch (error) {
-    console.error('Error fetching AIChatHistory:', error);
+    console.error('Error sorting AIChatHistory:', error);
     throw error;
   }
 }
@@ -66,6 +66,7 @@ async function addAiResponseToAiChatHistory(aiChatId, message) {
 
 async function addUserMessageToAiChatHistory(aiChatId, message) {
   try {
+    console.log('hello')
     const aiChatHistory = await prisma.aiChatHistory.create({
       data: {
         ai_chat: {
@@ -93,10 +94,14 @@ const openai = new OpenAIApi(configuration);
 
 module.exports = () => {
 
-  router.post('/', async (req, res) => {
+  router.post('/:chatId', async (req, res) => {
+
   try {
-  const { info } = req.body;
-  let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(req.query), getUserById(info.userId), addUserMessageToAiChatHistory(req.query, info.message)]);
+    console.log("post gpt")
+  const info = req.body;
+  console.log(info)
+  console.log(req.params.chatId)
+  let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(req.params.chatId), getUserById(info.userId), addUserMessageToAiChatHistory(req.params.chatId, info.message)]);
   chatHistory = await sortAiChatHistory(chatHistory);
   let sysprompt = `You are a health and fitness coach chatbot who replies enthusiastically and encouragingly to your client. Who is ${userdata.sex}. Their age is ${userdata.age}. They have ${userdata.experience} experience with fitness. They have ${userdata.equitment} gym equipment available to them. Their weight is ${userdata.weight} pounds. They are ${userdata.height} inches tall. They have the goal to ${userdata.goal}.`
 
@@ -119,24 +124,24 @@ module.exports = () => {
     stream: false,
   });
 
-  await addAiResponseToAiChatHistory(req.query, gptResponse.data.choices[0].content);
+  await addAiResponseToAiChatHistory(req.params.chatId, gptResponse.data.choices[0].content);
 
   res.status(200).json(gptResponse.data.choices[0].content);
   } catch (error) {
     if (error.response) {
       console.log(error.response.data);
       console.log(error.response.status);
-      res.sendsStatus(500);
+      res.sendStatus(500);
     } else {
     console.log(error);
-    res.sendsStatus(500);
+    res.sendStatus(500);
   }
 }
 });
 
-router.get('/', async (req, res) => {
+router.get('/:chatId', async (req, res) => {
   try {
-    const chatId = req.query;
+    const chatId = req.params.chatId;
     const chatHistory = await getAiChatHistoryByAiChatId(chatId);
     const sortedChatHistory = await sortAiChatHistory(chatHistory);
     res.status(200).json(sortedChatHistory);
@@ -145,4 +150,6 @@ router.get('/', async (req, res) => {
     res.sendStatus(500);
   }
 }
-)};
+)
+return router
+};
