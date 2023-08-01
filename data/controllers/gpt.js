@@ -1,5 +1,4 @@
-const prisma = require("../models/index.js")
-
+const prisma = require("../models/index.js").db
 const { Configuration, OpenAIApi } = require("openai");
 const express = require('express');
 const router = express.Router();
@@ -66,7 +65,6 @@ async function addAiResponseToAiChatHistory(aiChatId, message) {
 
 async function addUserMessageToAiChatHistory(aiChatId, message) {
   try {
-    console.log('hello')
     const aiChatHistory = await prisma.aiChatHistory.create({
       data: {
         ai_chat: {
@@ -97,24 +95,32 @@ module.exports = () => {
   router.post('/:chatId', async (req, res) => {
 
   try {
-    console.log("post gpt")
   const info = req.body;
-  console.log(info)
-  console.log(req.params.chatId)
-  let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(req.params.chatId), getUserById(info.userId), addUserMessageToAiChatHistory(req.params.chatId, info.message)]);
+  chatId = parseInt(req.params.chatId);
+  let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(chatId), getUserById(parseInt(info.userId)), addUserMessageToAiChatHistory(chatId, info.message)]);
   chatHistory = await sortAiChatHistory(chatHistory);
-  let sysprompt = `You are a health and fitness coach chatbot who replies enthusiastically and encouragingly to your client. Who is ${userdata.sex}. Their age is ${userdata.age}. They have ${userdata.experience} experience with fitness. They have ${userdata.equitment} gym equipment available to them. Their weight is ${userdata.weight} pounds. They are ${userdata.height} inches tall. They have the goal to ${userdata.goal}.`
+  let experience
+  switch (userdata.experience) {
+    case "0" || 0: experience = "novice";
+     break;
+    case "1" || 1: experience = "intermediate";
+     break;
+    case "2" || 2: experience = "advanced";
+     break;
+    case "3" || 3: experience = "expert";
+     break;
+  }
 
+  let sysprompt = `You are a health and fitness coach chatbot who replies enthusiastically and encouragingly to your client. Who is ${userdata.sex}. Their age is ${userdata.age}. They have ${experience} experience with fitness. They have ${userdata.equipment ? "yes" : "no"} gym equipment available to them. Their weight is ${userdata.weight} pounds. They are ${userdata.height} inches tall. They have the goal to ${userdata.goals}.`
   let system = {
     role: "system",
     content: sysprompt,
   }
 
-  let prompt = chatHistory.unshift(system);
-
+  chatHistory.unshift(system);
   const gptResponse = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
-    messages: prompt,
+    messages: chatHistory,
     max_tokens: 256,
     temperature: 0.9,
     top_p: 1,
@@ -123,10 +129,10 @@ module.exports = () => {
     n: 1,
     stream: false,
   });
+  console.log(gptResponse.data.choices[0].message.content)
+  await addAiResponseToAiChatHistory(chatId, gptResponse.data.choices[0].message.content);
 
-  await addAiResponseToAiChatHistory(req.params.chatId, gptResponse.data.choices[0].content);
-
-  res.status(200).json(gptResponse.data.choices[0].content);
+  res.status(200).json(gptResponse.data.choices[0].message.content);
   } catch (error) {
     if (error.response) {
       console.log(error.response.data);
@@ -141,7 +147,7 @@ module.exports = () => {
 
 router.get('/:chatId', async (req, res) => {
   try {
-    const chatId = req.params.chatId;
+    const chatId = parseInt(req.params.chatId);
     const chatHistory = await getAiChatHistoryByAiChatId(chatId);
     const sortedChatHistory = await sortAiChatHistory(chatHistory);
     res.status(200).json(sortedChatHistory);
