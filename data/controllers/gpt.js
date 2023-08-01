@@ -1,5 +1,5 @@
-import prisma from "../models/database.js";
-import { Configuration, OpenAIApi } from "openai";
+const prisma  = require("../models/database.js");
+const { Configuration, OpenAIApi } = require("openai");
 const express = require('express');
 const router = express.Router();
 
@@ -97,7 +97,7 @@ module.exports = () => {
   try {
   const { info } = req.body;
   let [chatHistory, userdata] = await Promise.all([getAiChatHistoryByAiChatId(req.query), getUserById(info.userId), addUserMessageToAiChatHistory(req.query, info.message)]);
-  let chatHistory = await sortAiChatHistory(chatHistory);
+  chatHistory = await sortAiChatHistory(chatHistory);
   let sysprompt = `You are a health and fitness coach chatbot who replies enthusiastically and encouragingly to your client. Who is ${userdata.sex}. Their age is ${userdata.age}. They have ${userdata.experience} experience with fitness. They have ${userdata.equitment} gym equipment available to them. Their weight is ${userdata.weight} pounds. They are ${userdata.height} inches tall. They have the goal to ${userdata.goal}.`
 
   let system = {
