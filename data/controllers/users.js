@@ -2,9 +2,9 @@ const prisma = require("../models/index.js").db;
 
 module.exports.addUser = async (req, res) => {
   const userData = req.body;
-  user.online_status = false;
-  user.profile_pic = '';
-  console.log(user);
+  userData.online_status = false;
+  userData.profile_pic = '';
+  console.log(userData);
 
 
 
@@ -17,11 +17,14 @@ module.exports.addUser = async (req, res) => {
   }
 }
 
-module.exports.getUsers = async (req, res) => {
-  try {
-    let users = await prisma.user.findMany();
-    res.send(users);
-  } catch {
-    res.sendStatus(500);
-  }
+module.exports.getUser = async (req, res) => {
+  // try {
+  //   let users = await prisma.user.findMany();
+  //   res.send(users);
+  // } catch {
+  //   res.sendStatus(500);
+  // }
+
+  console.log('HEARD');
+  console.log(req.query);
 }
