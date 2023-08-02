@@ -4,6 +4,8 @@
   "description": "BO server",
   "main": "index.js",
   "scripts": {
+    "db": "npx prisma studio",
+    "refreshdb": "npx prisma db pull && npx prisma generate",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
