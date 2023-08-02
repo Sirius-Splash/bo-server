@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const gpt = require('./data/controllers/gpt.js')
 const app = express()
 const PORT = 8080
-const controllers = require('./data/controllers')
+const usersControllers = require('./data/controllers/users')
 
 app.use(cors());
 app.use(express.json());
@@ -13,8 +13,8 @@ app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.use("/gpt", gpt());
 
-app.post('/user', controllers.addUser);
-// app.get('/users', controllers.getUsers);
+app.post('/user', usersControllers.addUser);
+app.get('/users', usersControllers.getUsers);
 
 app.use('/', (req, res)=>{
   res.sendStatus(404)

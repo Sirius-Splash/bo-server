@@ -9,8 +9,11 @@ module.exports.addUser = async (req, res) => {
   // } catch {
   //   res.sendStatus(500);
   // }
-  console.log("HEARD")
-  console.log(req);
+  const user = req.body;
+  user.online_status = false;
+  user.profile_pic = '';
+  console.log(user);
+
 }
 
 module.exports.getUsers = async (req, res) => {
