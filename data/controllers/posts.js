@@ -30,3 +30,8 @@ module.exports.getPosts = async (req, res) => {
     res.sendStatus(500);
   }
 }
+
+module.exports.postPost = async (post) => {
+  await prisma.post.create(post)
+  console.log('Post accepted')
+}
