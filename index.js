@@ -14,7 +14,7 @@ app.use(bodyParser.json())
 app.use("/gpt", gpt());
 
 app.post('/user', usersControllers.addUser);
-app.get('/users', usersControllers.getUsers);
+app.get('/user', usersControllers.getUser);
 
 app.use('/', (req, res)=>{
   res.sendStatus(404)
