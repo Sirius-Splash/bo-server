@@ -17,8 +17,12 @@ app.use(bodyParser.json())
 
 app.use("/gpt", gpt());
 app.get('/posts', postControllers.getPosts);
-app.post('/user', usersControllers.addUser);
 app.get('/user', usersControllers.getUser);
+app.get('/comments', postControllers.getComments);
+
+app.post('/user', usersControllers.addUser);
+app.post('/posts', postControllers.postPost);
+app.post('/comments', postControllers.postComment);
 app.get('/tracker', trackerControllers.getWorkouts);
 app.post('/tracker', trackerControllers.postWorkout)
 
