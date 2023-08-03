@@ -7,6 +7,7 @@ const app = express()
 const PORT = 8080
 const usersControllers = require('./data/controllers/users')
 const postControllers = require('./data/controllers/posts')
+const trackerControllers = require('./data/controllers/tracker')
 
 
 app.use(cors());
@@ -22,6 +23,8 @@ app.get('/comments', postControllers.getComments);
 app.post('/user', usersControllers.addUser);
 app.post('/posts', postControllers.postPost);
 app.post('/comments', postControllers.postComment);
+app.get('/tracker', trackerControllers.getWorkouts);
+app.post('/tracker', trackerControllers.postWorkout)
 
 app.use('/', (req, res)=>{
   res.sendStatus(404)
