@@ -92,7 +92,7 @@ const openai = new OpenAIApi(configuration);
 
 module.exports = () => {
 
-  router.post('/:chatId', async (req, res) => {
+  router.patch('/:chatId', async (req, res) => {
 
   try {
   const info = req.body;
@@ -157,5 +157,42 @@ router.get('/:chatId', async (req, res) => {
   }
 }
 )
+
+router.post('/', async (req, res) => {
+  try {
+    const newChat = await prisma.aiChat.create({
+      data: {
+        user: {
+          connect: {
+            id: req.data.userId,
+          },
+        },
+      },
+    });
+    res.status(200).json(newChat);
+  } catch (error) {
+    console.error('Error creating new AIChat:', error);
+    res.sendStatus(500);
+  }
+}
+)
+
+router.delete('/:chatId', async (req, res) => {
+  try {
+    const chatId = parseInt(req.params.chatId);
+    const deletedChat = await prisma.aiChat.delete({
+      where: {
+        id: chatId,
+      },
+    });
+    res.status(200).json(deletedChat);
+  } catch (error) {
+    console.error('Error deleting AIChat:', error);
+    res.sendStatus(500);
+  }
+}
+)
+
+
 return router
 };
