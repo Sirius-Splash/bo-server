@@ -5,8 +5,9 @@ const bodyParser = require('body-parser')
 const gpt = require('./data/controllers/gpt.js')
 const app = express()
 const PORT = 8080
-const usersControllers = require('./data/controllers/users')
-const postControllers = require('./data/controllers/posts')
+const usersControllers = require('./data/controllers/users');
+const postControllers = require('./data/controllers/posts');
+const authControllers = require('./data/controllers/auth');
 const trackerControllers = require('./data/controllers/tracker')
 
 
@@ -15,13 +16,14 @@ app.use(express.json());
 app.use(morgan('dev'))
 app.use(bodyParser.json())
 
+app.use('/auth', authControllers.loginUser);
 app.use("/gpt", gpt());
 
 app.get('/posts', postControllers.getPosts);
-app.get('/user', usersControllers.getUser);
+// app.get('/user', usersControllers.getUser);
 app.get('/comments', postControllers.getComments);
 
-app.post('/user', usersControllers.addUser);
+app.post('/register', usersControllers.registerUser);
 app.post('/posts', postControllers.postPost);
 app.post('/comments', postControllers.postComment);
 app.get('/tracker', trackerControllers.getWorkouts);
