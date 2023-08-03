@@ -14,6 +14,7 @@ module.exports.registerUser = async (req, res) => {
   const userData = req.body;
   userData.online_status = false;
   userData.profile_pic = '';
+  userData.access = '';
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,7 +22,7 @@ module.exports.registerUser = async (req, res) => {
     console.log('AFTER HASH: ', userData)
 
 
-    // await prisma.user.create({data: userData});
+    await prisma.user.create({data: userData});
     res.sendStatus(201);
   } catch (err) {
     console.error(err);

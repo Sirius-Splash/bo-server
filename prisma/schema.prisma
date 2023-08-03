@@ -23,6 +23,7 @@ model User {
   trainer           Boolean?
   username          String
   weight            Int?
+  access            String?
   ai_chats          AiChat[]
   Comment           Comment[]
   received_messages DirectMessage[] @relation("ReceivedMessages")
@@ -38,9 +39,9 @@ model Post {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   user_id    Int
+  comments   Comment[]
   photos     Photo[]
   user       User      @relation(fields: [user_id], references: [id])
-  comments    Comment[]
 }
 
 model Comment {
@@ -50,8 +51,8 @@ model Comment {
   post_id    Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user       User     @relation(fields: [user_id], references: [id])
   post       Post     @relation(fields: [post_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
 }
 
 model Photo {
@@ -88,14 +89,6 @@ model DirectMessage {
   sender       User     @relation("SentMessages", fields: [sender_id], references: [id])
 }
 
-model PastWorkout {
-  id         Int        @id @default(sequence())
-  user_id    Int
-  created_at DateTime   @default(now())
-  exercises  Exercise[]
-  user       User       @relation(fields: [user_id], references: [id])
-}
-
 model Exercise {
   id            Int         @id @default(sequence())
   exercise_name String
@@ -103,5 +96,13 @@ model Exercise {
   rep           Int
   created_at    DateTime    @default(now())
   pastWorkoutId Int
-  PastWorkout   PastWorkout @relation(fields: [pastWorkoutId], references: [id])
+  pastWorkout   PastWorkout @relation(fields: [pastWorkoutId], references: [id])
+}
+
+model PastWorkout {
+  id         Int        @id @default(sequence())
+  user_id    Int
+  created_at DateTime   @default(now())
+  exercise   Exercise[]
+  user       User       @relation(fields: [user_id], references: [id])
 }

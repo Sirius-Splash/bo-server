@@ -10,8 +10,22 @@ const postControllers = require('./data/controllers/posts');
 const authControllers = require('./data/controllers/auth');
 const trackerControllers = require('./data/controllers/tracker')
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5173/signup',
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+          callback(null, true)
+      } else {
+          callback(new Error('Not allowed by CORS'));
+      }
+  },
+  optionsSuccessStatus: 200
+}
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'))
 app.use(bodyParser.json())

@@ -1,5 +1,7 @@
 const prisma = require("../models/index.js").db;
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 module.exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
@@ -13,6 +15,28 @@ module.exports.loginUser = async (req, res) => {
 
   const match = await bcrypt.compare(password, foundUser.password);
   if (match) {
+
+    const accessToken = jwt.sign(
+      {username: foundUser.username},
+      process.env.ACCESS_TOKEN_SECRET,
+      {expiresIn: 60*10}
+    );
+    const refreshToken = jwt.sign(
+      {username: foundUser.username},
+      process.env.REFRESH_TOKEN_SECRET,
+      {expiresIn: 60*60*24}
+    );
+
+    const updateToken = await prisma.user.update({
+      where: {
+        id: foundUser.id
+      },
+      data: {
+        access: refreshToken
+      }
+    });
+
+    console.log(updateToken)
 
   } else {
     res.sendStatus(401);
