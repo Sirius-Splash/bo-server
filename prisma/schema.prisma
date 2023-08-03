@@ -24,20 +24,23 @@ model User {
   username          String
   weight            Int?
   ai_chats          AiChat[]
+  Comment           Comment[]
   received_messages DirectMessage[] @relation("ReceivedMessages")
   sent_messages     DirectMessage[] @relation("SentMessages")
+  PastWorkout       PastWorkout[]
   posts             Post[]
 }
 
 model Post {
-  id         Int      @id @default(sequence())
+  id         Int       @id @default(sequence())
   title      String
   body       String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   user_id    Int
+  Comment    Comment[]
   photos     Photo[]
-  user       User     @relation(fields: [user_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
 }
 
 model Photo {
@@ -72,4 +75,33 @@ model DirectMessage {
   chat         String
   recipient    User     @relation("ReceivedMessages", fields: [recipient_id], references: [id])
   sender       User     @relation("SentMessages", fields: [sender_id], references: [id])
+}
+
+model Comment {
+  id         Int      @id @default(sequence())
+  body       String
+  user_id    Int
+  post_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime
+  Post       Post     @relation(fields: [post_id], references: [id])
+  User       User     @relation(fields: [user_id], references: [id])
+}
+
+model PastWorkout {
+  id         Int        @id @default(sequence())
+  user_id    Int
+  created_at DateTime   @default(now())
+  exercises  Exercise[]
+  user       User       @relation(fields: [user_id], references: [id])
+}
+
+model Exercise {
+  id            Int         @id @default(sequence())
+  exercise_name String
+  set           Int
+  rep           Int
+  created_at    DateTime    @default(now())
+  pastWorkoutId Int
+  PastWorkout   PastWorkout @relation(fields: [pastWorkoutId], references: [id])
 }
