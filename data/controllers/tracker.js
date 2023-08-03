@@ -3,8 +3,8 @@ const prisma = require("../models/index.js").db
 module.exports.getWorkouts = async (req,res) => {
   prisma.pastWorkout.findMany({
     where: {
-      user_id: req.param.num
-      // user_id: req.query.num
+      // user_id: req.param.num
+      user_id: req.query.num
     },
     include: {
       exercises: true
