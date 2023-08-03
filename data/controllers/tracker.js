@@ -1,14 +1,19 @@
 const prisma = require("../models/index.js").db
 
 module.exports.getWorkouts = async (req,res) => {
-  console.log('in GET workouts CONTROLLER')
-  console.log(req.data)
-  console.log(req.body)
-  console.log(req.params)
-  res.send('GET WORKOUTS HAHAHAHA')
+  prisma.pastWorkout.findMany({
+    where: {
+      user_id: req.param.num
+      // user_id: req.query.num
+    },
+    include: {
+      exercises: true
+    }
+  }).then((data)=>{
+    res.send(data)
+  }).catch((err)=>{res.sendStatus(500)})
 }
 module.exports.postWorkout = async (req,res) => {
-  console.log('in POST workouts CONTROLLER')
   console.log(req.body)
   let exerArr = req.body.exercises;
   let id = req.body.user_id;
