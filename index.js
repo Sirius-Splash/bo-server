@@ -16,20 +16,12 @@ app.use(bodyParser.json())
 
 app.use("/gpt", gpt());
 app.get('/posts', postControllers.getPosts);
-app.post('/user', usersControllers.addUser);
 app.get('/user', usersControllers.getUser);
-app.post('/posts', (req, res)=>{
-  console.log('got request')
-  postControllers.postPost(req.body)
-  .then(()=>{
-    res.status(201)
-    res.send()
-  })
-  .catch((err)=>{
-    console.log('Post not accepted')
-    console.log(err.message)
-  })
-})
+app.get('/comments', postControllers.getComments);
+
+app.post('/user', usersControllers.addUser);
+app.post('/posts', postControllers.postPost);
+app.post('/comments', postControllers.postComment);
 
 app.use('/', (req, res)=>{
   res.sendStatus(404)
