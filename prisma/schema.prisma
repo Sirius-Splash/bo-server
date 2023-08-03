@@ -88,17 +88,6 @@ model DirectMessage {
   sender       User     @relation("SentMessages", fields: [sender_id], references: [id])
 }
 
-model Comment {
-  id         Int      @id @default(sequence())
-  body       String
-  user_id    Int
-  post_id    Int
-  created_at DateTime @default(now())
-  updated_at DateTime
-  Post       Post     @relation(fields: [post_id], references: [id])
-  User       User     @relation(fields: [user_id], references: [id])
-}
-
 model PastWorkout {
   id         Int        @id @default(sequence())
   user_id    Int
