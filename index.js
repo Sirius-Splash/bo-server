@@ -16,6 +16,7 @@ app.use(morgan('dev'))
 app.use(bodyParser.json())
 
 app.use("/gpt", gpt());
+
 app.get('/posts', postControllers.getPosts);
 app.get('/user', usersControllers.getUser);
 app.get('/comments', postControllers.getComments);
