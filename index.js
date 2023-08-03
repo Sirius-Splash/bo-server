@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors');
+const verifyJWT = require('./middleware/verifyJWT');
 const bodyParser = require('body-parser')
 const gpt = require('./data/controllers/gpt.js')
 const app = express()
@@ -22,6 +23,8 @@ const corsOptions = {
           callback(new Error('Not allowed by CORS'));
       }
   },
+
+  credentials: true,
   optionsSuccessStatus: 200
 }
 
@@ -31,13 +34,18 @@ app.use(morgan('dev'))
 app.use(bodyParser.json())
 
 app.use('/auth', authControllers.loginUser);
+app.post('/register', usersControllers.registerUser);
+
+
+
+//PROTECTED ROUTES
+app.use(verifyJWT);
+
 app.use("/gpt", gpt());
 
 app.get('/posts', postControllers.getPosts);
-// app.get('/user', usersControllers.getUser);
 app.get('/comments', postControllers.getComments);
 
-app.post('/register', usersControllers.registerUser);
 app.post('/posts', postControllers.postPost);
 app.post('/comments', postControllers.postComment);
 app.get('/tracker', trackerControllers.getWorkouts);
