@@ -193,11 +193,11 @@ router.delete('/:chatId', async (req, res) => {
 }
 )
 
-router.get('/', async (req, res) => {
+router.get('/user/:userId', async (req, res) => {
   try {
     const aiChats = await prisma.aiChat.findMany({
       where: {
-        user_id: req.data.userId,
+        user_id: req.params.userId,
       },
     });
     res.status(200).json(aiChats);
