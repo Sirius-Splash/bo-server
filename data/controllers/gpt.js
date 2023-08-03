@@ -169,7 +169,7 @@ router.post('/', async (req, res) => {
         },
       },
     });
-    res.status(200).json(newChat);
+    res.status(200).json(newChat.id);
   } catch (error) {
     console.error('Error creating new AIChat:', error);
     res.sendStatus(500);
@@ -193,6 +193,20 @@ router.delete('/:chatId', async (req, res) => {
 }
 )
 
+router.get('/', async (req, res) => {
+  try {
+    const aiChats = await prisma.aiChat.findMany({
+      where: {
+        user_id: req.data.userId,
+      },
+    });
+    res.status(200).json(aiChats);
+  } catch (error) {
+    console.error('Error fetching AIChats:', error);
+    res.sendStatus(500);
+  }
+}
+)
 
 return router
 };
