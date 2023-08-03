@@ -26,5 +26,5 @@ module.exports.getUser = async (req, res) => {
   // }
 
   console.log('HEARD');
-  console.log(req.query);
+  console.log(req.headers);
 }
