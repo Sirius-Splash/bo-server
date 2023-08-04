@@ -1,7 +1,7 @@
 const models = require('../models');
 const prisma = models.db;
 
-modules.exports.fetchDirectMessages = async (req, res) => {
+module.exports.fetchDirectMessages = async (req, res) => {
   try {
     const { currentUserId, otherUserId } = req.body;
     const messages = await prisma.directMessage.findMany({

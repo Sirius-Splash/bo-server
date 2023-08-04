@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Widget {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-}
-
 model User {
   id                Int             @id @default(sequence())
   email             String
