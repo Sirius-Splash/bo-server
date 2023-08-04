@@ -11,9 +11,11 @@ const postControllers = require('./data/controllers/posts');
 const authControllers = require('./data/controllers/auth');
 const trackerControllers = require('./data/controllers/tracker')
 const dmControllers = require("./data/controllers/directMessages");
+const cookieParser = require("cookie-parser");
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://127.0.0.1:5173',
   'http://localhost:5173/signup',
 ];
 const corsOptions = {
@@ -21,6 +23,7 @@ const corsOptions = {
       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
           callback(null, true)
       } else {
+          console.log(origin);
           callback(new Error('Not allowed by CORS'));
       }
   },
@@ -30,6 +33,7 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions));
+app.use(cookieParser())
 app.use(express.json());
 app.use(morgan('dev'))
 app.use(bodyParser.json())
@@ -40,7 +44,7 @@ app.post('/register', usersControllers.registerUser);
 
 
 //PROTECTED ROUTES
-app.use(verifyJWT);
+// app.use(verifyJWT);
 
 app.use("/gpt", gpt());
 

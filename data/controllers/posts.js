@@ -82,7 +82,6 @@ module.exports.getComments = async (req, res) => {
 
 module.exports.postPost = async (req, res) => {
   let photos = req.body.photos;
-  req.body.user_id = 3;
   delete req.body.photos;
   console.log(req.body)
   await prisma.post.create({data: req.body})
