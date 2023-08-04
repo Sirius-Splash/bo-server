@@ -47,7 +47,6 @@ app.use("/gpt", gpt());
 app.get('/posts', postControllers.getPosts);
 app.get('/comments', postControllers.getComments);
 
-app.post('/user', usersControllers.addUser);
 app.post('/posts', postControllers.postPost);
 app.post('/comments', postControllers.postComment);
 app.get('/tracker', trackerControllers.getWorkouts);
@@ -67,6 +66,3 @@ app.use("/", (req, res) => {
 
 app.listen(PORT)
 console.log(`Listening on port ${PORT}`)
-
-app.listen(PORT);
-console.log(`Listening on port ${PORT}`);
