@@ -1,3 +1,14 @@
+const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors');
+const bodyParser = require('body-parser')
+const gpt = require('./data/controllers/gpt.js')
+const app = express()
+const PORT = 8080
+const usersControllers = require('./data/controllers/users')
+const postControllers = require('./data/controllers/posts')
+const trackerControllers = require('./data/controllers/tracker')
+
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -30,9 +41,17 @@ function createMessageRoutes(endpoint) {
     }
   });
 
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'))
+app.use(bodyParser.json())
   app.post(`/${endpoint}`, async (req, res) => {
     const { currentUserId, otherUserId, chat } = req.body;
 
+app.use("/gpt", gpt());
+app.get('/posts', postControllers.getPosts);
+app.get('/user', usersControllers.getUser);
+app.get('/comments', postControllers.getComments);
     try {
       const sentMessage = await sendMessage(
         currentUserId,
@@ -48,6 +67,11 @@ function createMessageRoutes(endpoint) {
   });
 }
 
+app.post('/user', usersControllers.addUser);
+app.post('/posts', postControllers.postPost);
+app.post('/comments', postControllers.postComment);
+app.get('/tracker', trackerControllers.getWorkouts);
+app.post('/tracker', trackerControllers.postWorkout)
 // Create message routes for different types (social, planner, tracker)
 createMessageRoutes("social");
 createMessageRoutes("planner");
@@ -56,6 +80,10 @@ createMessageRoutes("tracker");
 app.use("/", (req, res) => {
   res.sendStatus(404);
 });
+
+
+app.listen(PORT)
+console.log(`Listening on port ${PORT}`)
 
 app.listen(PORT);
 console.log(`Listening on port ${PORT}`);
