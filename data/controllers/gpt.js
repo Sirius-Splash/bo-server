@@ -150,6 +150,7 @@ router.get('/:chatId', async (req, res) => {
     const chatId = parseInt(req.params.chatId);
     const chatHistory = await getAiChatHistoryByAiChatId(chatId);
     const sortedChatHistory = await sortAiChatHistory(chatHistory);
+    console.log(sortedChatHistory)
     res.status(200).json(sortedChatHistory);
   } catch (error) {
     console.error('Error fetching AIChatHistory:', error);
@@ -164,7 +165,7 @@ router.post('/', async (req, res) => {
       data: {
         user: {
           connect: {
-            id: req.data.userId,
+            id: req.body.userId,
           },
         },
       },
@@ -180,6 +181,7 @@ router.post('/', async (req, res) => {
 router.delete('/:chatId', async (req, res) => {
   try {
     const chatId = parseInt(req.params.chatId);
+    console.log('delete' ,chatId)
     const deletedChat = await prisma.aiChat.delete({
       where: {
         id: chatId,
@@ -197,7 +199,7 @@ router.get('/user/:userId', async (req, res) => {
   try {
     const aiChats = await prisma.aiChat.findMany({
       where: {
-        user_id: req.params.userId,
+        user_id: parseInt(req.params.userId),
       },
     });
     res.status(200).json(aiChats);
