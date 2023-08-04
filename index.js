@@ -10,6 +10,7 @@ const usersControllers = require('./data/controllers/users');
 const postControllers = require('./data/controllers/posts');
 const authControllers = require('./data/controllers/auth');
 const trackerControllers = require('./data/controllers/tracker')
+const dmControllers = require("./data/controllers/directMessages");
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -46,15 +47,26 @@ app.use("/gpt", gpt());
 app.get('/posts', postControllers.getPosts);
 app.get('/comments', postControllers.getComments);
 
+app.post('/user', usersControllers.addUser);
 app.post('/posts', postControllers.postPost);
 app.post('/comments', postControllers.postComment);
 app.get('/tracker', trackerControllers.getWorkouts);
 app.post('/tracker', trackerControllers.postWorkout)
 
-app.use('/', (req, res)=>{
-  res.sendStatus(404)
+app.get('/social', dmControllers.fetchDirectMessages);
+app.get('/tracker', dmControllers.fetchDirectMessages);
+app.get('/planner', dmControllers.fetchDirectMessages);
+app.post('/social', dmControllers.sendMessage);
+app.post('/tracker', dmControllers.sendMessage);
+app.post('/planner', dmControllers.sendMessage);
+
+app.use("/", (req, res) => {
+  res.sendStatus(404);
 });
 
 
 app.listen(PORT)
 console.log(`Listening on port ${PORT}`)
+
+app.listen(PORT);
+console.log(`Listening on port ${PORT}`);
