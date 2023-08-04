@@ -12,40 +12,46 @@ app.use(bodyParser.json());
 app.post("/user", controllers.addUser);
 app.get('/users', controllers.getUsers);
 
+// Define a function for creating message routes
+function createMessageRoutes(endpoint) {
+  app.get(`/${endpoint}`, async (req, res) => {
+    const { currentUserId, otherUserId } = req.query;
 
-// ***----- DIRECT MESSAGE ROUTES -----***
-app.get("/DirectMessage", async (req, res) => {
-  const { currentUserId, otherUserId } = req.params;
+    try {
+      const fetchedDirectMessages = await fetchDirectMessages(
+        currentUserId,
+        otherUserId
+      );
+      console.log("SUCCESSFULLY GOT DMS:::::", fetchedDirectMessages);
+      res.json(fetchedDirectMessages);
+    } catch (err) {
+      console.log("ERROR GETTING DMS:::::", err);
+      res.status(500).send(err.message || "Error getting DMs.");
+    }
+  });
 
-  try {
-    const fetchedDirectMessages = await fetchDirectMessages(
-      currentUserId,
-      otherUserId
-    );
-    console.log("SUCCESSFULLY GOT DMS:::::", fetchedDirectMessages);
-    res.json(fetchedDirectMessages);
-  } catch (err) {
-    console.log("ERROR GETTING DMS:::::", err);
-    res.status(500).send(err.message || "Error getting DMs.");
-  }
-});
+  app.post(`/${endpoint}`, async (req, res) => {
+    const { currentUserId, otherUserId, chat } = req.body;
 
-app.post("/DirectMessage", async (req, res) => {
-  const { currentUserId, otherUserId, chat } = req.body;
+    try {
+      const sentMessage = await sendMessage(
+        currentUserId,
+        otherUserId,
+        chat
+      );
+      console.log("SUCCESSFULLY SENT DM:::::", sentMessage);
+      res.json(sentMessage);
+    } catch (err) {
+      console.log("ERROR SENDING DM:::::", err);
+      res.status(500).send(err.message || "Error sending DM.");
+    }
+  });
+}
 
-  try {
-    const sentMessage = await sendMessage (
-      currentUserId,
-      otherUserId,
-      chat
-    );
-    console.log("SUCCESSFULLY SENT DM:::::", sentMessage);
-    res.json(sentMessage);
-  } catch (err) {
-    console.log("ERROR SENDING DM:::::", err);
-    res.status(500).send(err.message || "Error sending DM.");
-  }
-});
+// Create message routes for different types (social, planner, tracker)
+createMessageRoutes("social");
+createMessageRoutes("planner");
+createMessageRoutes("tracker");
 
 app.use("/", (req, res) => {
   res.sendStatus(404);

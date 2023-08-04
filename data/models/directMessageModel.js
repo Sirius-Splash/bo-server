@@ -25,7 +25,7 @@ const saveMessage = async (currentUserId, otherUserId, chat) => {
       data: {
         sender_id: currentUserId,
         recipient_id: otherUserId,
-        chat
+        chat: chat,
       },
     });
     console.log("MODEL SUCCESSFULLY SAVED MESSAGE");
