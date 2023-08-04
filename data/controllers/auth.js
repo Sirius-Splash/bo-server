@@ -40,7 +40,7 @@ module.exports.loginUser = async (req, res) => {
 
 
     res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24*60*60*1000});
-    res.send({ accessToken }, {id: foundUser.id});
+    res.send({ accessToken, id: foundUser.id });
   } else {
     res.sendStatus(401);
   }
