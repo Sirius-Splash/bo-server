@@ -129,17 +129,16 @@ module.exports = () => {
     n: 1,
     stream: false,
   });
-  console.log(gptResponse.data.choices[0].message.content)
   await addAiResponseToAiChatHistory(chatId, gptResponse.data.choices[0].message.content);
 
   res.status(200).json(gptResponse.data.choices[0].message.content);
   } catch (error) {
     if (error.response) {
-      console.log(error.response.data);
-      console.log(error.response.status);
+      console.error(error.response.data);
+      console.error(error.response.status);
       res.sendStatus(500);
     } else {
-    console.log(error);
+    console.error(error);
     res.sendStatus(500);
   }
 }
@@ -150,7 +149,6 @@ router.get('/:chatId', async (req, res) => {
     const chatId = parseInt(req.params.chatId);
     const chatHistory = await getAiChatHistoryByAiChatId(chatId);
     const sortedChatHistory = await sortAiChatHistory(chatHistory);
-    console.log(sortedChatHistory)
     res.status(200).json(sortedChatHistory);
   } catch (error) {
     console.error('Error fetching AIChatHistory:', error);
@@ -181,7 +179,6 @@ router.post('/', async (req, res) => {
 router.delete('/:chatId', async (req, res) => {
   try {
     const chatId = parseInt(req.params.chatId);
-    console.log('delete' ,chatId)
     const deletedChat = await prisma.aiChat.delete({
       where: {
         id: chatId,
